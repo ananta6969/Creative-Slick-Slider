@@ -26,7 +26,6 @@ $('.js-nav-slider').slick({
   ]
 });
 
-
 // Build custom numbered dots
 const totalSlides = $('.image-slider-col').length;
 for (let i = 0; i < totalSlides; i++) {
@@ -52,7 +51,19 @@ function moveTitle(index) {
   $('.animate-title__list').css('transform', `translateY(${offset}px)`);
 }
 
-// Sync current slide with dots and image
+// Function to update blurred background
+function updateBackground(index) {
+  const $slider = $('.js-image-slider');
+  const $bgBlur = $('.slider-container__flex .bg-blur');
+  const $currentImg = $slider.find('.image-slider-col').eq(index).find('img');
+  const imgSrc = $currentImg.attr('src');
+
+  if (imgSrc) {
+    $bgBlur.css('background-image', `url(${imgSrc})`);
+  }
+}
+
+// Sync current slide with dots, image, and background
 $('.js-nav-slider').on('beforeChange', function(event, slick, currentSlide, nextSlide) {
   $('.image-slider-col').removeClass('current');
   $('.image-slider-col').eq(nextSlide).addClass('current');
@@ -61,6 +72,7 @@ $('.js-nav-slider').on('beforeChange', function(event, slick, currentSlide, next
   $('.custom-dots span').eq(nextSlide).addClass('active');
 
   moveTitle(nextSlide);
+  updateBackground(nextSlide);
 });
 
 // Click dots to jump to slide
@@ -68,6 +80,7 @@ $('.custom-dots').on('click', 'span', function() {
   const index = $(this).index();
   $('.js-nav-slider').slick('slickGoTo', index);
   moveTitle(index);
+  updateBackground(index);
 });
 
 // Adjust title height dynamically on resize
@@ -76,5 +89,6 @@ $(window).on('resize', function() {
   moveTitle(activeIndex);
 });
 
-// Set initial title position
+// Set initial title position and background
 moveTitle(0);
+updateBackground(0);
